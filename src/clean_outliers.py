@@ -1,16 +1,26 @@
 import pandas as pd
 
-df = pd.read_csv("data/raw_business_data.csv")
+def clean_outliers(df):
+    # 1. Remove negative exposures
+    df = df[df["Exposure"] > 0]
 
-cleaned = df.copy()
+    # 2. Remove impossible driver ages
+    df = df[(df["DrivAge"] >= 18) & (df["DrivAge"] <= 100)]
 
-for col in ["Density", "DrivAge", "BonusMalus", "VehAge"]:
-    Q1 = df[col].quantile(0.25)
-    Q3 = df[col].quantile(0.75)
-    IQR = Q3 - Q1
-    lower = Q1 - 1.5 * IQR
-    upper = Q3 + 1.5 * IQR
-    cleaned = cleaned[(cleaned[col] >= lower) & (cleaned[col] <= upper)]
+    # 3. Cap BonusMalus at regulatory limits
+    df = df[(df["BonusMalus"] >= 50) & (df["BonusMalus"] <= 350)]
 
-cleaned.to_csv("data/cleaned_business_data.csv", index=False)
-print("Cleaned:", cleaned.shape)
+    # 4. Remove Density outliers beyond Tukey fence
+    q1 = df["Density"].quantile(0.25)
+    q3 = df["Density"].quantile(0.75)
+    iqr = q3 - q1
+    upper_fence = q3 + 1.5 * iqr
+    df = df[df["Density"] <= upper_fence]
+
+    return df
+
+if __name__ == "__main__":
+    df = pd.read_csv("data/raw_business_data.csv")
+    cleaned = clean_outliers(df)
+    cleaned.to_csv("data/cleaned_business_data.csv", index=False)
+    print("Cleaned dataset saved:", cleaned.shape)

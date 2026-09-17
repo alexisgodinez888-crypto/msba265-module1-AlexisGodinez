@@ -1,0 +1,13 @@
+column,dtype,min,max,n_unique
+IDpol,str,,,6
+ClaimNb,int64,50.0,230.0,115
+Exposure,int64,0.0,16.0,11
+Area,float64,1.0,27000.0,1607
+VehPower,int64,18.0,100.0,83
+VehAge,float64,0.0027322404371584,2.01,181
+DrivAge,float64,1.0,6114330.0,678013
+BonusMalus,str,,,22
+VehBrand,int64,0.0,100.0,78
+VehGas,str,,,11
+Density,str,,,2
+Region,int64,4.0,15.0,12
